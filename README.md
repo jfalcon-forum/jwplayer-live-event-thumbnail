@@ -1,0 +1,1 @@
+# jwplayer-live-event-thumbnail
