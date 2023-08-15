@@ -24,15 +24,15 @@ let imageObj = {
   firstNewsFive: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+First+News+at+5+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "1050",
-    endTime: "1130",
+    startTime: "950",
+    endTime: "1030",
   },
   // morning
   firstNewsSix: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+First+News+at+6+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "1150",
-    endTime: "1230",
+    startTime: "1050",
+    endTime: "1130",
   },
   // morning
   firstNewsSaturday: {
