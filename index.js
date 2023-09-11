@@ -38,15 +38,21 @@ let imageObj = {
   firstNewsSaturday: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+First+News+Saturday+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "1250",
-    endTime: "1330",
+    startTime: "1150",
+    endTime: "1230",
   },
   // morning
   firstNewsSunday: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+First+News+Sunday+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "1250",
-    endTime: "1330",
+    startTime: "1150",
+    endTime: "1230",
+  },
+  agWeek: {
+    imageUrl:
+      "https://static.forumcomm.com/images/wdayplus-thumbnails/AgWeek+TV+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
+    startTime: "1225",
+    endTime: "1240",
   },
   // morning
   hotMic: {
@@ -61,6 +67,13 @@ let imageObj = {
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+News+at+11+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
     startTime: "1550",
     endTime: "1630",
+  },
+  // Bison Wednesdays
+  bisonGameday: {
+    imageUrl:
+      "https://static.forumcomm.com/images/wdayplus-thumbnails/Bison+Gameday+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
+    startTime: "1520",
+    endTime: "1540",
   },
   // evening
   newsFour: {
@@ -225,19 +238,12 @@ const getImage = (imageArr) => {
   return imageUrl;
 };
 
-let event = {
-  event: "channel_active",
-  channel_id: "oQI9YDnI",
-  webhook_id: "JsV8pNyB",
-  site_id: "l0XScfRd",
-  event_time: "2023-08-11T16:00:23+00:00",
-};
-
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
 export const handler = async (event) => {
+  console.log(event);
   if (event === undefined) {
     return {
       status: 401,
@@ -245,7 +251,7 @@ export const handler = async (event) => {
     };
   }
   if (event.channel_id !== "oQI9YDnI") {
-    return;
+    return { message: "not wday event" };
   }
   const channel = await getLiveChannels(event.site_id, event.channel_id);
   if (channel.status !== "active") {
@@ -264,48 +270,19 @@ export const handler = async (event) => {
     image
   );
   if (thumbnail.status === "processing") {
-    await sleep(10000);
-    const response = await enableThumbnail(event.site_id, thumbnail.id);
+    let isIncomplete = true;
+    let response;
+    while (isIncomplete) {
+      await sleep(10000);
+      const request = await enableThumbnail(event.site_id, thumbnail.id);
+      if (response.status) {
+        isIncomplete = false;
+        response = request;
+      }
+    }
+    console.log(response);
     return response;
   } else {
     return await enableThumbnail(event.site_id, thumbnail.id);
   }
 };
-
-// Used to test locally
-// const main = async (event) => {
-//   if (event === undefined) {
-//     return {
-//       status: 401,
-//       message: "malformed event",
-//     };
-//   }
-//   if (event.channel_id !== "oQI9YDnI") {
-//     return;
-//   }
-//   const channel = await getLiveChannels(event.site_id, event.channel_id);
-//   if (channel.status !== "active") {
-//     return { message: "no active wday stream" };
-//   }
-//   // need to check for media_id and status = active
-//   const liveEvent = channel.recent_events[0];
-//   if (liveEvent.status !== "active") {
-//     return { message: "no active wday event" };
-//   }
-//   // calculate date and get corresponding event
-//   const image = getImage(imageObj);
-//   const thumbnail = await createThumbnail(
-//     event.site_id,
-//     liveEvent.media_id,
-//     image
-//   );
-//   if (thumbnail.status === "processing") {
-//     await sleep(10000);
-//     const response = await enableThumbnail(event.site_id, thumbnail.id);
-//     return response;
-//   } else {
-//     return await enableThumbnail(event.site_id, thumbnail.id);
-//   }
-// };
-
-// main(event);
