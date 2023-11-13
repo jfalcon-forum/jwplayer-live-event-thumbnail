@@ -3,105 +3,112 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-// setting times in daylight savings time
-// to get standard time -100 from values
+// Settings in Standard Time to get daylight savings time -100 from values
+
 let imageObj = {
   // night
   newsNine: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+News+at+9+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "150",
-    endTime: "230",
+    startTime: "250",
+    endTime: "330",
   },
   // night
   newsTen: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+News+at+10+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "250",
-    endTime: "330",
+    startTime: "350",
+    endTime: "430",
   },
   // morning
   firstNewsFive: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+First+News+at+5+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "950",
-    endTime: "1030",
+    startTime: "1050",
+    endTime: "1130",
   },
   // morning
   firstNewsSix: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+First+News+at+6+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "1050",
-    endTime: "1130",
+    startTime: "1150",
+    endTime: "1230",
   },
   // morning
   firstNewsSaturday: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+First+News+Saturday+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "1150",
-    endTime: "1230",
+    startTime: "1250",
+    endTime: "1330",
   },
   // morning
   firstNewsSunday: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+First+News+Sunday+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "1150",
-    endTime: "1230",
+    startTime: "1250",
+    endTime: "1330",
   },
   agWeek: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/AgWeek+TV+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "1225",
-    endTime: "1240",
+    startTime: "1425",
+    endTime: "1440",
   },
   // morning
   hotMic: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/Hot+Mic+-+1920+x+1080+-+Web+Thumbnail.jpg",
-    startTime: "1350",
-    endTime: "1430",
+    startTime: "1450",
+    endTime: "1530",
   },
   // morning
   newsEleven: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+News+at+11+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "1550",
-    endTime: "1630",
+    startTime: "1650",
+    endTime: "1730",
   },
   // Bison Wednesdays
+  bisonMediaZone: {
+    imageUrl:
+      "https://static.forumcomm.com/images/wdayplus-thumbnails/Bison+Media+Zone+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
+    startTime: "1620",
+    endTime: "1640",
+  },
+  // Bison Saturday
   bisonGameday: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/Bison+Gameday+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "1520",
-    endTime: "1540",
+    startTime: "1550",
+    endTime: "1610",
   },
   // evening
   newsFour: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+News+at+4+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "2050",
-    endTime: "2130",
+    startTime: "2150",
+    endTime: "2230",
   },
   // evening
   newsFive: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+News+at+5+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "2150",
-    endTime: "2230",
+    startTime: "2250",
+    endTime: "2330",
   },
   // evening
   newsFiveThirty: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+News+at+530+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "2220",
-    endTime: "2300",
+    startTime: "2320",
+    endTime: "2400",
   },
   // evening
   newsSix: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+News+at+6+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
-    startTime: "2250",
-    endTime: "2330",
+    startTime: "2350",
+    endTime: "30",
   },
 };
 
@@ -222,9 +229,9 @@ const isDateInRange = (time, startTime, endTime) => {
 const getImage = (imageArr) => {
   let time = dateCalc();
   let daylightOffset = 0;
-  if (!isDST) {
-    daylightOffset = 100;
-  }
+  //if (!isDST) {
+  //  daylightOffset = 100;
+  //}
   let imageUrl = "";
 
   const image = Object.keys(imageArr).forEach((event) => {
@@ -275,7 +282,7 @@ export const handler = async (event) => {
     while (isIncomplete) {
       await sleep(10000);
       const request = await enableThumbnail(event.site_id, thumbnail.id);
-      if (response.status) {
+      if (response?.status !== undefined) {
         isIncomplete = false;
         response = request;
       }
