@@ -101,14 +101,14 @@ let imageObj = {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+News+at+530+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
     startTime: "2320",
-    endTime: "2400",
+    endTime: "2345",
   },
   // evening
   newsSix: {
     imageUrl:
       "https://static.forumcomm.com/images/wdayplus-thumbnails/WDAY+News+at+6+-+Web+Thumbnail+-+Landscape+-+1920+x+1080.jpg",
     startTime: "2350",
-    endTime: "30",
+    endTime: "2430",
   },
 };
 
@@ -242,6 +242,9 @@ const getImage = (imageArr) => {
       imageUrl = imageArr[event].imageUrl;
     }
   });
+  if (imageUrl === "") {
+    imageUrl = imageArr["newsSix"].imageUrl;
+  }
   return imageUrl;
 };
 
