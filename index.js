@@ -205,10 +205,80 @@ const enableThumbnail = async (site_id, thumbnail_id) => {
   return response;
 };
 
-const isDST = (d) => {
-  let jan = new Date(d.getFullYear(), 0, 1).getTimezoneOffset();
-  let jul = new Date(d.getFullYear(), 6, 1).getTimezoneOffset();
-  return Math.max(jan, jul) !== d.getTimezoneOffset();
+const convertTZ = (date, tzString) => {
+  return new Date(
+    (typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {
+      timeZone: tzString,
+    })
+  );
+};
+
+const isDST = () => {
+  let date = new Date();
+  let todayCentral = convertTZ(date, "America/Chicago");
+  // december - february always CST
+  if (todayCentral.getMonth() < 2 || todayCentral.getMonth() > 10) {
+    // standard time
+    return false;
+  }
+  // april - october always CDT
+  if (todayCentral.getMonth() >= 3 && todayCentral.getMonth() <= 9) {
+    // daylight savings time
+    return true;
+  }
+  let dayLightSavingsDay;
+  // calculate daylight savings date in march
+  if (todayCentral.getMonth() === 2) {
+    let currentYear = date.getUTCFullYear();
+    let march = new Date(`3/1/${currentYear}`);
+    let sunCount = 0;
+    for (let i = 0; i <= 30; i++) {
+      let marchDate;
+      if (i === 0) {
+        marchDate = new Date(march.setDate(march.getDate()));
+      } else {
+        marchDate = new Date(march.setDate(march.getDate() + 1));
+      }
+      if (marchDate.getDay() === 0) {
+        sunCount++;
+      }
+      if (sunCount === 2) {
+        dayLightSavingsDay = marchDate;
+        break;
+      }
+    }
+    if (todayCentral.getDate() >= dayLightSavingsDay.getDate()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  // calculate standard time date in november
+  if (todayCentral.getMonth() === 10) {
+    let currentYear = date.getUTCFullYear();
+    let november = new Date(`11/1/${currentYear}`);
+    let sunCount = 0;
+    for (let i = 0; i <= 30; i++) {
+      let novemberDate;
+      if (i === 0) {
+        novemberDate = new Date(november.setDate(november.getDate()));
+      } else {
+        novemberDate = new Date(november.setDate(november.getDate() + 1));
+      }
+      if (novemberDate.getDay() === 0) {
+        sunCount++;
+      }
+      if (sunCount === 1) {
+        dayLightSavingsDay = novemberDate;
+        break;
+      }
+    }
+    if (todayCentral.getDate() >= dayLightSavingsDay.getDate()) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 };
 
 const dateCalc = () => {
@@ -229,9 +299,9 @@ const isDateInRange = (time, startTime, endTime) => {
 const getImage = (imageArr) => {
   let time = dateCalc();
   let daylightOffset = 0;
-  //if (!isDST) {
-  //  daylightOffset = 100;
-  //}
+  if (isDST) {
+    daylightOffset = 100;
+  }
   let imageUrl = "";
 
   const image = Object.keys(imageArr).forEach((event) => {
